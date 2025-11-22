@@ -23,9 +23,6 @@ function getPuzzleOfTheDay(puzzles, startDate) {
   return puzzles[diffDays % puzzles.length];
 }
 
-      const next = document.querySelector(`input[data-index="${i + 1}"]`);
-      if (value && next) next.focus();
-    });
 
 function drawLetterBoxes(word, onSubmit) {
   const container = document.getElementById("letterContainer");
