@@ -180,7 +180,7 @@ button:hover {
   border: 2px solid #ccc;
   border-radius: 8px;
   font-size: 1.8rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -202,7 +202,7 @@ button:hover {
 
 .letterBox {
   width: 30px;
-  height: 40px;
+  height: 30px;
   font-size: 22px;
   text-align: center;
   border: 2px solid #333;
