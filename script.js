@@ -24,44 +24,80 @@ function getPuzzleOfTheDay(puzzles, startDate) {
   return puzzles[diffDays % puzzles.length];
 }
 
-function drawLetterBoxes(word) {
-  const container = document.getElementById("letterContainer");
-  container.innerHTML = "";
-
-  for (let i = 0; i < word.length; i++) {
-    const input = document.createElement("input");
-    input.classList.add("letterBox");
-    input.maxLength = 1;
-
-    input.dataset.index = i;
-
-    // comportamiento: escribir → avanzar
-    input.addEventListener("input", (e) => {
-      const value = e.target.value.toUpperCase();
-      e.target.value = value;
-
       const next = document.querySelector(`input[data-index="${i + 1}"]`);
       if (value && next) next.focus();
     });
 
-    // Backspace → retroceder
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && !e.target.value) {
+function drawLetterBoxes(word, onSubmit) {
+  const container = document.getElementById("letterContainer");
+  container.innerHTML = "";
+
+  for (let i = 0; i < word.length; i++) {
+    const box = document.createElement("input");
+    box.classList.add("letterBox");
+    box.maxLength = 1;
+    box.dataset.index = i;
+
+    // Escribir → minúsculas, highlight, avanzar
+    box.addEventListener("input", () => {
+      box.value = box.value.toLowerCase();
+
+      if (box.value !== "") {
+        box.classList.add("filled");
+        box.classList.add("pop");
+      }
+
+      const next = document.querySelector(`input[data-index="${i + 1}"]`);
+      if (box.value && next) next.focus();
+    });
+
+    // Teclas especiales → retroceder o enviar
+    box.addEventListener("keydown", (e) => {
+
+      // Pulsar ENTER → comprobar
+      if (e.key === "Enter") {
+        onSubmit(getTypedAnswer());
+      }
+
+      // Backspace
+      if (e.key === "Backspace" && !box.value) {
         const prev = document.querySelector(`input[data-index="${i - 1}"]`);
         if (prev) prev.focus();
       }
+
+      // Si escribo sobre letra ya escrita → se borra antes
+      if (e.key.length === 1 && box.value.length === 1) {
+        box.value = "";
+        box.classList.remove("filled");
+      }
     });
 
-    container.appendChild(input);
+    container.appendChild(box);
   }
 
-  // Foco en el primero
   container.firstChild.focus();
 }
+
+
+// Obtener palabra escrita
 function getTypedAnswer() {
-  const boxes = document.querySelectorAll(".letterBox");
-  return Array.from(boxes).map(b => b.value).join("");
+  return Array.from(document.querySelectorAll(".letterBox"))
+    .map(box => box.value)
+    .join("");
 }
+
+
+// Activar animación shake cuando fallan
+function triggerShake() {
+  const row = document.getElementById("letterContainer");
+  row.classList.add("shake");
+
+  // Quitar animación después
+  setTimeout(() => {
+    row.classList.remove("shake");
+  }, 400);
+}
+
 
 // Guess checking
 document.getElementById("checkBtn").addEventListener("click", () => {
