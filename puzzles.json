@@ -1,0 +1,17 @@
+{
+  "startDate": "2025-01-01",
+  "puzzles": [
+    {
+      "clue": "Capital de Francia",
+      "answer": "PARIS"
+    },
+    {
+      "clue": "Animal que da leche",
+      "answer": "VACA"
+    },
+    {
+      "clue": "Planeta rojo",
+      "answer": "MARTE"
+    }
+  ]
+}
