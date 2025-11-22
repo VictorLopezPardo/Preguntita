@@ -10,7 +10,7 @@ fetch("puzzles.json")
     todayPuzzle = getPuzzleOfTheDay(data.puzzles, data.startDate);
     answer = todayPuzzle.answer.toUpperCase();
     revealed = Array(answer.length).fill(false);
-    renderBoxes();
+    drawLetterBoxes(answer); // donde answer es la palabra correcta
     document.getElementById("clue").textContent = todayPuzzle.clue;
 
     loadStreak();
@@ -24,52 +24,83 @@ function getPuzzleOfTheDay(puzzles, startDate) {
   return puzzles[diffDays % puzzles.length];
 }
 
-// Render empty letter boxes
-function renderBoxes() {
-  const box = document.getElementById("answerBox");
-  box.innerHTML = "";
-  for (let i = 0; i < answer.length; i++) {
-    const div = document.createElement("div");
-    div.className = "letterBox";
-    if (revealed[i]) {
-      div.textContent = answer[i];
-      div.classList.add("revealed");
-    }
-    box.appendChild(div);
+function drawLetterBoxes(word) {
+  const container = document.getElementById("letterContainer");
+  container.innerHTML = "";
+
+  for (let i = 0; i < word.length; i++) {
+    const input = document.createElement("input");
+    input.classList.add("letterBox");
+    input.maxLength = 1;
+
+    input.dataset.index = i;
+
+    // comportamiento: escribir → avanzar
+    input.addEventListener("input", (e) => {
+      const value = e.target.value.toUpperCase();
+      e.target.value = value;
+
+      const next = document.querySelector(`input[data-index="${i + 1}"]`);
+      if (value && next) next.focus();
+    });
+
+    // Backspace → retroceder
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !e.target.value) {
+        const prev = document.querySelector(`input[data-index="${i - 1}"]`);
+        if (prev) prev.focus();
+      }
+    });
+
+    container.appendChild(input);
   }
+
+  // Foco en el primero
+  container.firstChild.focus();
+}
+function getTypedAnswer() {
+  const boxes = document.querySelectorAll(".letterBox");
+  return Array.from(boxes).map(b => b.value).join("");
 }
 
 // Guess checking
 document.getElementById("checkBtn").addEventListener("click", () => {
-  const input = document.getElementById("answerInput").value.trim().toUpperCase();
-  const feedback = document.getElementById("feedback");
-
-  if (input === answer) {
+  const attempt = getTypedAnswer();
+  if (attempt === answer) {
     feedback.textContent = "🎉 ¡Correcto!";
     feedback.style.color = "green";
 
     saveWin();
     document.getElementById("shareBtn").style.display = "block";
-
+    document.querySelectorAll(".letterBox").forEach((box, i) => {
+      setTimeout(() => box.classList.add("flip"), i * 80);
+    });
     revealAll();
   } else {
     feedback.textContent = "❌ Incorrecto";
     feedback.style.color = "red";
+    feedback.classList.add("shake");
+    setTimeout(() => feedback.classList.remove("shake"), 500);
+
   }
 });
 
 // Reveal one letter (hint)
 document.getElementById("hintBtn").addEventListener("click", () => {
-  const indices = [];
-  for (let i = 0; i < answer.length; i++) {
-    if (!revealed[i]) indices.push(i);
-  }
-  if (indices.length === 0) return;
+  const boxes = document.querySelectorAll(".letterBox");
 
-  const idx = indices[Math.floor(Math.random() * indices.length)];
-  revealed[idx] = true;
-  renderBoxes();
+  const emptyIndices = Array.from(boxes)
+    .map((b, i) => (!b.value ? i : null))
+    .filter(i => i !== null);
+
+  if (emptyIndices.length === 0) return;
+
+  const i = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+
+  boxes[i].value = answer[i];
+  boxes[i].classList.add("pop"); // si tienes la animación pop
 });
+
 
 // Reveal entire word after success
 function revealAll() {
