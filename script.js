@@ -10,9 +10,8 @@ fetch("puzzles.json")
     todayPuzzle = getPuzzleOfTheDay(data.puzzles, data.startDate);
     answer = todayPuzzle.answer.toUpperCase();
     revealed = Array(answer.length).fill(false);
-    drawLetterBoxes(answer); // donde answer es la palabra correcta
     document.getElementById("clue").textContent = todayPuzzle.clue;
-
+    drawLetterBoxes(answer); // donde answer es la palabra correcta
     loadStreak();
   });
 
