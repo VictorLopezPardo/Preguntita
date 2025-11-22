@@ -189,7 +189,45 @@ button:hover {
 }
 
 .letterBox:focus {
-  border-color: #6aaa64;
+  border-color: #0099ff;
+  background: #e8f5ff;
+}
+
+
+#letterContainer {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.letterBox {
+  width: 30px;
+  height: 40px;
+  font-size: 22px;
+  text-align: center;
+  border: 2px solid #333;
+  border-left: none;       /* quitar borde izquierdo de todas excepto la primera */
+  border-radius: 0;
   outline: none;
-  background: #eef7ee;
+  background: #fff;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  font-family: 'Arvo', serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* la primera caja tiene borde completo */
+.letterBox:first-child {
+  border-left: 2px solid #333;
+}
+
+/* cuando tiene letra */
+.letterBox.filled {
+  border-color: #0077cc;
+  background: #eef7ff;
+}
+
+/* animación al teclear */
+.letterBox.pop {
+  transform: scale(1.1);
 }
