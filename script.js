@@ -11,6 +11,17 @@ function dateDiffInDays(a, b) {
   return Math.floor((b - a) / (1000 * 60 * 60 * 24));
 }
 
+function formatDate(ms) {
+    const date = new Date(ms);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+}
+
+
 function getPuzzleOfTheDay(puzzles, startDate) {
   const today = new Date();
   const start = new Date(startDate);
@@ -187,7 +198,9 @@ function giveHint() {
 // ---------- Compartir ----------
 async function shareResult() {
   const streak = localStorage.getItem("streak") || 0;
-  const text = `Preguntita\nPista: ${todayPuzzle ? todayPuzzle.clue : ""}\n¡Lo acerté! 🔥 Racha: ${streak}`;
+  const ms = Date.now(); 
+  const formattedDate = formatDate(ms);
+  const text = `Preguntita - entre líneas (${formattedDate})\n${todayPuzzle ? todayPuzzle.clue : ""}\n¡Lo acerté! 🔥 Racha: ${streak}\nhttps://victorlopezpardo.github.io/Preguntita/`;
   try {
     await navigator.clipboard.writeText(text);
     alert("Resultado copiado al portapapeles");
